@@ -1,3 +1,4 @@
+
 data class Address(var street: String, var house: String, var apart: String)
 
 data class AddressBook(var addressList: MutableMap<String, Address>) {
