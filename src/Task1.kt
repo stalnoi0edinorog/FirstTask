@@ -1,52 +1,39 @@
-data class OneAdress(var inf: Pair<String, Triple<String, String, String>>){
-    fun person() = inf.first
+data class Address(var street: String, var house: String, var apart: String)
 
-    fun adress() = inf.second
-}
+data class AddressBook(var addressList: MutableMap<String, Address>) {
 
-data class AdressBook(var listAdress: MutableList<OneAdress>) {
+    fun addressOfPerson(name: String): Address = addressList[name] ?: throw Exception()
 
-    fun adressOfPerson(name: String): Triple<String, String, String> {
-            var result = Triple("", "", "")
-            for (element in listAdress)
-                if (name == element.person()) {
-                    result = element.adress()
-                    break
-                }
-            return result
-
-        }
-
-    fun sameStreet(street: String): List<String> {
+    fun peopleOnTheSameStreet(street: String): List<String> {
             val list = mutableListOf<String>()
-            for (element in listAdress)
-                if (street == element.adress().first)
-                    list.add(element.person())
+            for (address in addressList)
+                if (street == address.value.street)
+                    list.add(address.key)
             return list
         }
 
-    fun sameHouse(house: Pair<String, String>): List<String>{
+    fun peopleInTheSameHouse(house: Pair<String, String>): List<String>{
             val list = mutableListOf<String>()
-            for (element in listAdress)
-                if (house.first == element.adress().first && house.second == element.adress().second)
-                    list.add(element.person())
+            for (address in addressList)
+                if (house.first == address.value.street && house.second == address.value.house)
+                    list.add(address.key)
             return list
         }
 
-    fun addPair(human: Pair<String, Triple<String, String, String>>) {
-            val list = listAdress.filter { it.inf.first == human.first }
-            if (list.isEmpty())
-                listAdress.add(OneAdress(human))
+    fun addPair(person: Pair<String, Address>) {
+            val list = addressList.any { it.key == person.first }
+            if (!list)
+                addressList[person.first] = person.second
+
         }
 
-    fun delete(human: String) = listAdress.filter { it.inf.first != human}
+    fun delete(human: String) = addressList.remove(human) //Удаляет ключ и возвращает адресс -> ???
 
-    fun chahgeAdress(): Nothing = TODO()
-
-
-
-
+    fun chahgeAddress(person: Pair<String, Address>) {
+        delete(person.first)
+        addPair(person)
     }
+}
 
 
 
