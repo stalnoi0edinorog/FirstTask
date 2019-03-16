@@ -3,12 +3,12 @@ import org.junit.jupiter.api.Test
 
 
 class Tests {
-    val address1 = Address("Алхимическая", "18", "64")
-    val address2 =  Address("Мстительная", "81", "55")
-    val address3 =  Address("Мстительная", "11", "98")
-    val address4 =  Address("Мстительная", "11", "67")
+    private val address1 =  Address("Алхимическая", "18", "64")
+    private val address2 =  Address("Мстительная", "81", "55")
+    private val address3 =  Address("Мстительная", "11", "98")
+    private val address4 =  Address("Мстительная", "11", "67")
 
-    val addressBook = mutableMapOf(
+    private val addressBook = mutableMapOf(
         "Петрунина" to address1,
         "Ананас" to address2,
         "Солонко" to address3,
@@ -17,37 +17,44 @@ class Tests {
 
     @Test
     fun addressOfPerson(){
-        assertEquals(Address("Алхимическая", "18", "64"),
+        assertEquals(address1,
             AddressBook(addressBook).addressOfPerson("Петрунина"))
-
-        assertEquals(Address("Мстительная", "81", "55"),
+        assertEquals(null,
+            AddressBook(addressBook).addressOfPerson(""))
+        assertEquals(null,
+            AddressBook(addressBook).addressOfPerson("Лермонтов"))
+        assertEquals(address2,
             AddressBook(addressBook).addressOfPerson("Ананас") )
     }
 
     @Test
-    fun peopleOnTheSameStreet(){
-        assertEquals(listOf("Ананас","Солонко", "Яо"), AddressBook(addressBook).peopleOnTheSameStreet("Мстительная"))
-        assertEquals(listOf("Петрунина"), AddressBook(addressBook).peopleOnTheSameStreet("Алхимическая"))
+    fun sameStreet(){
+        assertEquals(listOf("Ананас","Солонко", "Яо"), AddressBook(addressBook).sameStreet("Мстительная"))
+        assertEquals(listOf("Петрунина"), AddressBook(addressBook).sameStreet("Алхимическая"))
+        assertEquals(listOf(), AddressBook(addressBook).sameStreet("Тулина"))
+        assertEquals(listOf(), AddressBook(addressBook).sameStreet(""))
     }
 
     @Test
-    fun peopleInTheSameHouse(){
-        assertEquals(listOf("Солонко", "Яо"), AddressBook(addressBook).peopleInTheSameHouse("Мстительная" to "11"))
-        assertEquals(listOf("Ананас"), AddressBook(addressBook).peopleInTheSameHouse("Мстительная" to "81"))
+    fun sameHouse(){
+        assertEquals(listOf("Солонко", "Яо"), AddressBook(addressBook).sameHouse(Address("Мстительная", "11", "56")))
+        assertEquals(listOf("Ананас"), AddressBook(addressBook).sameHouse(Address("Мстительная", "81", "54")))
+        assertEquals(listOf(), AddressBook(addressBook).sameHouse(Address("Мстительная", "2", "14")))
+
     }
 
     @Test
-    fun addPair(){
+    fun addPersonAddress(){
         val addressB1 = AddressBook(mutableMapOf("Ананас" to address2, "Солонко" to address3, "Яо" to address4))
-        addressB1.addPair("Петрунина" to address1)
+        addressB1.addPersonAddress("Петрунина", address1)
         assertEquals(AddressBook(addressBook), addressB1)
 
         val addressB2 = AddressBook(mutableMapOf("Петрунина" to address1, "Ананас" to address2, "Яо" to address4))
-        addressB2.addPair("Солонко" to address3)
+        addressB2.addPersonAddress("Солонко", address3)
         assertEquals(AddressBook(addressBook), addressB2)
 
         val addressB3 = AddressBook(mutableMapOf("Петрунина" to address1, "Ананас" to address2, "Солонко" to address3))
-        addressB3.addPair("Яо" to address4)
+        addressB3.addPersonAddress("Яо", address4)
         assertEquals(AddressBook(addressBook), addressB3)
     }
 
@@ -95,25 +102,25 @@ class Tests {
     }
 
         @Test
-        fun chahgeAddress(){
-            val addressBB1 = AddressBook(mutableMapOf( // ** От addressBook работает неправильно -> ???
+        fun changeAddress(){
+            val addressBB1 = AddressBook(mutableMapOf(
                 "Петрунина" to address1,
                 "Ананас" to address2,
                 "Солонко" to address3,
                 "Яо" to address4))
-            addressBB1.chahgeAddress( "Яо" to Address("Смольная", "21", "876"))
+            addressBB1.changeAddress( "Яо", Address("Смольная", "21", "876"))
             assertEquals(AddressBook(mutableMapOf(
                 "Петрунина" to address1,
                 "Ананас" to address2,
                 "Солонко" to address3,
                 "Яо" to Address("Смольная", "21", "876"))), addressBB1)
 
-            val addressBB2 = AddressBook(mutableMapOf( // **
+            val addressBB2 = AddressBook(mutableMapOf(
                 "Петрунина" to address1,
                 "Ананас" to address2,
                 "Солонко" to address3,
                 "Яо" to address4))
-            addressBB2.chahgeAddress( "Солонко" to Address("Карасаева", "58", "14"))
+            addressBB2.changeAddress( "Солонко", Address("Карасаева", "58", "14"))
             assertEquals(AddressBook(mutableMapOf(
                 "Петрунина" to address1,
                 "Ананас" to address2,

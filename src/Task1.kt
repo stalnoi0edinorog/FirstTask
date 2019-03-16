@@ -1,38 +1,37 @@
 
-data class Address(var street: String, var house: String, var apart: String)
+data class Address(val street: String, val house: String, val apart: String)
 
-data class AddressBook(var addressList: MutableMap<String, Address>) {
+data class AddressBook(val addressMap: MutableMap<String, Address>) {
 
-    fun addressOfPerson(name: String): Address = addressList[name] ?: throw Exception()
+    fun addressOfPerson(name: String): Address? = addressMap[name]
 
-    fun peopleOnTheSameStreet(street: String): List<String> {
+    fun sameStreet(street: String): List<String> {
             val list = mutableListOf<String>()
-            for (address in addressList)
-                if (street == address.value.street)
-                    list.add(address.key)
+            for ((person, address) in addressMap)
+                if (street == address.street)
+                    list.add(person)
             return list
         }
 
-    fun peopleInTheSameHouse(house: Pair<String, String>): List<String>{
+    fun sameHouse(house: Address): List<String>{
             val list = mutableListOf<String>()
-            for (address in addressList)
-                if (house.first == address.value.street && house.second == address.value.house)
-                    list.add(address.key)
+            for ((person, address) in addressMap)
+                if (house.street == address.street && house.house == address.house)
+                    list.add(person)
             return list
         }
 
-    fun addPair(person: Pair<String, Address>) {
-            val list = addressList.any { it.key == person.first }
-            if (!list)
-                addressList[person.first] = person.second
-
+    fun addPersonAddress(person: String, address: Address) {
+        val hasSamePerson = person in addressMap
+        if (!hasSamePerson)
+                addressMap[person] = address
         }
 
-    fun delete(human: String) = addressList.remove(human) //Удаляет ключ и возвращает адресс -> ???
+    fun delete(human: String) = addressMap.remove(human)
 
-    fun chahgeAddress(person: Pair<String, Address>) {
-        delete(person.first)
-        addPair(person)
+    fun changeAddress(person: String, address: Address) {
+        delete(person)
+        addPersonAddress(person, address)
     }
 }
 
